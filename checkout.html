@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="stellar-sdk.js"></script>
+<script src="jquery.js"></script>
+</head>
+<body>
+    <div class="container">
+    <div class="row">
+        
+       <div class="col-md-5">
+        <div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">Create Account</h5>
+    <h6 class="card-subtitle mb-2 text-muted">you need stellar account to continue.. </h6>
+    <p class="card-text">
+      <strong>
+          click button below to create Account 
+      </strong></p>
+    <button class="btn btn-success" onclick="CreateAccount()">generate #1</button>
+    <button class="btn btn-success" onclick="CreateAccount()">generate #2</button>
+    <div id="display"> </div>
+</div>
+    </div></div>
+       <div class="col-md-5"><div class="card">
+  <div class="card-header">
+    checkout
+  </div>
+  <div class="card-body">
+      <label for="basic-url">Your vanity URL</label>
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="basic-addon3">key</span>
+  </div>
+  <input type="text" class="form-control" id="pkey1" aria-describedby="basic-addon3">
+</div>
+ 
+ <label for="basic-url">Your vanity URL</label>
+<div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="basic-addon3">distributer key</span>
+  </div>
+  <input type="text" class="form-control" id="pkey2" aria-describedby="basic-addon3">
+</div>
+  </div>
+</div></div>
+    </div>
+    
+    </div>
+     <script>
+
+ 
+var pair="";
+
+function CreateAccount() {
+      var display = document.getElementById("display");
+ pair = StellarSdk.Keypair.random();
+    var pk1 = pair.secret();
+
+var secretkey = pair.secret();
+var publickey =pair.publicKey();
+display.innerHTML = "Private Key: "+pair.secret();
+    document.getElementById('gadget_url').value = pk1;
+//    +"<br>Public Key: "+pair.publicKey();
+
+// display.innerHTML += "<br><br>Sending test XLM to the account... <br>";
+ 
+// ONLY ON TESTNET. THE CODE BELOW FUNDS THE ACCOUNT WITH 10,000 XLM.
+var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+
+   $.ajax({
+    type: "POST",
+    url: "https://friendbot.stellar.org",
+    data: {addr: publickey},
+    dataType:'JSON', 
+    success: function(response){
+
+ display.innerHTML += "<br>Account funded with 10,000 XLM";
+
+    }
+});
+
+  }
+ 
+ function GetAccount(){
+ 
+ var display = document.getElementById("display");
+ 
+var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
+
+// the JS SDK uses promises for most actions, such as retrieving an account
+server.loadAccount(pair.publicKey()).then(function(account) {
+ display.innerHTML += '<br><br><br>Getting Balances for account: ' + pair.publicKey();
+  account.balances.forEach(function(balance) {
+   //console.log('Type:', balance.asset_type, ', Balance:', balance.balance);
+     display.innerHTML += "<br>Type:"+ balance.asset_type + ', Balance:'+balance.balance;
+  });
+});
+
+ }
+ </script>
+    </body>
+</html>
